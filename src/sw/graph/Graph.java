@@ -14,6 +14,19 @@ public class Graph {
 
 		makeRegular();
 	}
+	public void setNumberNodes(int newNo) {
+		System.out.println(newNo + " " + getNumberNodes());
+		for(int i = 0; i < Math.abs(newNo - getNumberNodes()); i++) {
+			if(newNo > getNumberNodes()) {
+				nodes.add(new Node());
+			} else {
+				nodes.remove(0);
+			}
+		}
+
+		makeRegular();
+	}
+	public int getNumberNodes() { return nodes.size(); }
 
 	public void makeRegular() {
 		edges.clear();

@@ -10,6 +10,8 @@ import java.awt.Component;
 import javax.swing.JButton;
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import ui.NetworkDisplay;
 import sw.Configuration;
@@ -20,7 +22,15 @@ public class Window extends JFrame {
 	protected Graph graph;
 	public Window(Configuration conf) {
 		super("Small World Network Simulator");
-		getContentPane().add(new NetworkDisplay(), BorderLayout.CENTER);
+
+		final int minNumNodes = Integer.parseInt(conf.getPropertyValue("numNodes", "min"));
+		final int maxNumNodes = Integer.parseInt(conf.getPropertyValue("numNodes", "max"));
+		final int defaultNumNodes = Integer.parseInt(conf.getPropertyValue("numNodes", "default"));
+
+		graph = new Graph(defaultNumNodes);
+		graph.makeRegular();
+		NetworkDisplay networkDisplay = new NetworkDisplay(graph);
+		getContentPane().add(networkDisplay, BorderLayout.CENTER);
 
 		JPanel settingsPanel = new JPanel();
 		BoxLayout boxLayout = new BoxLayout(settingsPanel, BoxLayout.PAGE_AXIS);
@@ -30,18 +40,18 @@ public class Window extends JFrame {
 		nodeSliderLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		settingsPanel.add(nodeSliderLabel);
 
-		final int minNumNodes = Integer.parseInt(conf.getPropertyValue("numNodes", "min"));
-		final int maxNumNodes = Integer.parseInt(conf.getPropertyValue("numNodes", "max"));
-		final int defaultNumNodes = Integer.parseInt(conf.getPropertyValue("numNodes", "default"));
 		JSlider nodeSlider = new JSlider(JSlider.HORIZONTAL, minNumNodes, maxNumNodes, defaultNumNodes);
 		nodeSlider.setMinorTickSpacing(Math.abs(maxNumNodes-minNumNodes)/8);
 		nodeSlider.setMajorTickSpacing(Math.abs(maxNumNodes-minNumNodes)/4);
 		nodeSlider.setPaintTicks(true);
 		nodeSlider.setPaintLabels(true);
 		settingsPanel.add(nodeSlider);
-
-		graph = new Graph(defaultNumNodes);
-		graph.makeRegular();
+		nodeSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				graph.setNumberNodes(((JSlider)e.getSource()).getValue());
+				networkDisplay.repaint();
+			}
+		});
 
 		getContentPane().add(settingsPanel, BorderLayout.LINE_START);
 
