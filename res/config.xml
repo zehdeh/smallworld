@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<numNodes min="4" max="300" default="20"/>
+</configuration>
