@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<numNodes min="4" max="300" default="20"/>
+	<numNodes min="6" max="200" default="20" />
+	<node susceptibleColor="black" infectedColor="red" recoveredColor="blue" maxRadius="15" minRadius="2" />
+	<edge color="grey" />
+	<simulation defaultAlpha="0.3" defaultGamma="0.5" />
 </configuration>

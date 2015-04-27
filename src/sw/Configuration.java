@@ -1,5 +1,7 @@
 package sw;
 
+import java.awt.Color;
+import java.lang.reflect.Field;
 import java.io.IOException;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -29,6 +31,18 @@ public class Configuration {
 	public String getPropertyValue(String path, String propertyName) {
 		Element el = getElementByPath(doc,path);
 		return el.getAttribute(propertyName);
+	}
+
+	public Color getColorByString(String colorName) {
+		Color color;
+		try {
+				 Field field = Class.forName("java.awt.Color").getField(colorName);
+					  color = (Color)field.get(null);
+		} catch (Exception e) {
+				 color = Color.black;
+		}
+
+		return color;
 	}
 
 	public Element getElementByPath(Element parent, String path) {
