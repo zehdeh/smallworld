@@ -11,7 +11,7 @@ import java.util.Iterator;
 import sw.graph.Graph;
 import sw.graph.Node;
 import sw.graph.InfectionState;
-import sw.ui.NetworkDisplay;
+import sw.ui.Window;
 
 public class SIRSimulation implements Runnable {
 	protected Graph graph;
@@ -19,19 +19,18 @@ public class SIRSimulation implements Runnable {
 	long timeInterval;
 	double alpha;
 	double gamma;
-	NetworkDisplay networkDisplay;
-	public SIRSimulation(Graph graph, long timeInterval, double alpha, double gamma, NetworkDisplay nd) {
+	Window window;
+	public SIRSimulation(Graph graph, long timeInterval, double alpha, double gamma, Window window) {
 		this.graph = graph;
 		this.timeInterval = timeInterval;
 		this.alpha = alpha;
 		this.gamma = gamma;
-		this.networkDisplay = nd;
+		this.window = window;
 	}
 	public void reset() {
 		for(Node n : graph.getNodes()) {
 			n.setInfectionState(InfectionState.SUSCEPTIBLE);
 		}
-		networkDisplay.repaint();
 	}
 	public void terminate() {
 		running = false;
@@ -47,7 +46,7 @@ public class SIRSimulation implements Runnable {
 		Node patientZero = susceptibles.get(randInt(0,susceptibles.size()-1));
 		patientZero.setInfectionState(InfectionState.INFECTED);
 		infected.add(patientZero);
-		networkDisplay.repaint();
+		window.onTimeStep();
 		System.out.println("Test");
 
 		try {
@@ -86,7 +85,7 @@ public class SIRSimulation implements Runnable {
 				}
 			}
 			
-			networkDisplay.repaint();
+			window.onTimeStep();
 
 			try {
 				Thread.sleep(timeInterval);
@@ -95,6 +94,8 @@ public class SIRSimulation implements Runnable {
 			}
 		}
 		running = false;
+
+		window.onSimulationEnd();
 	}
 
 	public void setAlpha(double alpha) {

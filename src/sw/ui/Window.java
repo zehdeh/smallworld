@@ -18,6 +18,8 @@ import sw.SIRSimulation;
 public class Window extends JFrame {
 	public static final long serialVersionUID = 41L;
 	protected SIRSimulation simulation;
+	protected NetworkDisplay networkDisplay;
+	JButton playButton;
 	protected Thread thread;
 	protected Graph graph;
 	double alpha;
@@ -30,7 +32,7 @@ public class Window extends JFrame {
 
 		graph = new Graph(defaultNumNodes);
 		graph.makeRegular();
-		NetworkDisplay networkDisplay = new NetworkDisplay(conf, graph);
+		networkDisplay = new NetworkDisplay(conf, graph);
 		getContentPane().add(networkDisplay, BorderLayout.CENTER);
 
 		JPanel settingsPanel = new JPanel();
@@ -43,7 +45,7 @@ public class Window extends JFrame {
 		SIRSettingsPanel sirSettingsPanel = new SIRSettingsPanel(conf,this);
 		settingsPanel.add(sirSettingsPanel);
 
-		simulation = new SIRSimulation(graph, 1000, alpha, gamma, networkDisplay);
+		simulation = new SIRSimulation(graph, 1000, alpha, gamma, this);
 
 		JPanel buttonGroup = new JPanel();
 		BoxLayout boxLayout2 = new BoxLayout(buttonGroup, BoxLayout.LINE_AXIS);
@@ -62,10 +64,12 @@ public class Window extends JFrame {
 				}
 
 				simulation.reset();
+				networkDisplay.repaint();
+				playButton.setText("Play");
 			}
 		});
 
-		JButton playButton = new JButton("Play");
+		playButton = new JButton("Play");
 		playButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(simulation.isRunning()) {
@@ -102,6 +106,14 @@ public class Window extends JFrame {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
+	}
+
+	public void onTimeStep() {
+		networkDisplay.repaint();
+	}
+
+	public void onSimulationEnd() {
+		playButton.setText("Play");
 	}
 
 	public void setAlpha(double alpha) {
